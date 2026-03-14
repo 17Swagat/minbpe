@@ -21,9 +21,41 @@ print(len(text))
 print(len(list(text.encode('utf-8'))))
 
 # %%
-tokenizer.train(text, vocab_size=306, verbose=True)
+tokenizer.train(text, vocab_size=400, verbose=False)
 
 # %%
-tokenizer.merges
+# tokenizer.merges
+# %%
+# tokenizer.vocab
+
+# %% 
+# x = {
+#     (1, 2): 10,
+#     (3, 4): 11,
+#     (0, 1): 12,
+# }
+
+# y = {
+#     (1, 2): 20,
+#     (3, 4): 51,
+#     (0, 1): 22,
+#     (2, 4): 23,
+# }
 # %%
 tokenizer.vocab
+# %%
+# Encoding:
+# print(
+#     tokenizer.encode('States of america for ur love')
+# )
+print(
+    len(tokenizer.encode('States of america for ur love'))
+)
+print(
+    len(list('States of america for ur love'.encode('utf-8')))
+)
+
+# %%
+print(
+    tokenizer.encode('h')
+)

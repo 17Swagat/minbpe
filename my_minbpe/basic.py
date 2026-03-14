@@ -1,7 +1,6 @@
 from .base import Tokenizer
 from .utils import getStats, merge
 
-  
 class BasicTokenizer(Tokenizer):
     def __init__(self):
         super().__init__()
@@ -24,16 +23,29 @@ class BasicTokenizer(Tokenizer):
                 print(f"Merge {i}/{n_merges}: {top_pair} -> {replace_id}")
 
         final_len = len(tokens)
-        if verbose:
-            print(f"Compression: {initial_len / final_len:.2f}x")
+        # if verbose:
+        print(f"Compression: {initial_len / final_len:.2f}x")
 
         self.merges = merges
-        
+
         # Developing the Vocab:
         self.vocab = {idx: bytes([idx]) for idx in range(256)}
         for (p0, p1), id in self.merges.items():
             self.vocab[id] = self.vocab[p0] + self.vocab[p1]
 
-    def encode(self, text): ...
+    def encode(self, text):
+        text_bytes = text.encode("utf-8")
+        ids = list(text_bytes)
+        while True:
+            if len(ids) < 2:
+                break
+            stats = getStats(ids)
+            pair = min(stats, key=lambda p: self.merges.get(p, float("inf")))  # pyright: ignore[reportCallIssue]
+            if (stats[pair] < 2):
+                break
+            merge_id = self.merges.get(pair)
+            ids = merge(ids, pair, merge_id)
+
+        return ids
 
     def decode(self, ids): ...
