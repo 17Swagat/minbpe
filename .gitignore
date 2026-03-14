@@ -8,3 +8,5 @@ models/**/*
 # @ME:
 LECTURE_NOTES/.ipynb_checkpoints/
 .ipynb_checkpoints/
+
+.zed/
