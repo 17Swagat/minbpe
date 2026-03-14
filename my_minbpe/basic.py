@@ -1,7 +1,7 @@
 from .base import Tokenizer
 from .utils import getStats, merge
 
-
+  
 class BasicTokenizer(Tokenizer):
     def __init__(self):
         super().__init__()

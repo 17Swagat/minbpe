@@ -8,7 +8,7 @@
 from my_minbpe import BasicTokenizer
 
 tokenizer = BasicTokenizer()
-
+  
 # %%
 # tokenizer.train("aaabdaaabac", vocab_size=300, verbose=True)
 # %%
