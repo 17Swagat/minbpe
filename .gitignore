@@ -4,3 +4,7 @@ models/**/*
 *.pytest_cache
 *.model
 *.vocab
+
+# @ME:
+LECTURE_NOTES/.ipynb_checkpoints/
+.ipynb_checkpoints/
