@@ -1,6 +1,7 @@
 from .base import Tokenizer
 from .utils import getStats, merge
 
+
 class BasicTokenizer(Tokenizer):
     def __init__(self):
         super().__init__()
@@ -37,15 +38,23 @@ class BasicTokenizer(Tokenizer):
         text_bytes = text.encode("utf-8")
         ids = list(text_bytes)
         while True:
-            if len(ids) < 2:
-                break
             stats = getStats(ids)
-            pair = min(stats, key=lambda p: self.merges.get(p, float("inf")))  # pyright: ignore[reportCallIssue]
-            if (stats[pair] < 2):
+            lookfor_pair = min(stats, key=lambda p: self.merges.get(p, float('inf')))
+            if lookfor_pair not in self.merges:
                 break
-            merge_id = self.merges.get(pair)
-            ids = merge(ids, pair, merge_id)
-
+            replace_id = self.merges[lookfor_pair]
+            ids = merge(ids, lookfor_pair, replace_id)
+        
         return ids
 
-    def decode(self, ids): ...
+    def decode(self, ids):
+        # raw_bytes = b"".join([self.vocab[ids] for id in ids])
+        raw_bytes = b""
+        for id in ids:
+            raw_bytes += self.vocab[id]
+        txt = raw_bytes.decode('utf-8', errors='replace')
+        return txt
+            # if id < 256:
+            #     append_ = self.vocab[id]
+            
+            # raw_bytes += append_  # pyright: ignore[reportPossiblyUnboundVariable]
