@@ -7,54 +7,53 @@ class BasicTokenizer(Tokenizer):
         super().__init__()
 
     def train(self, text, vocab_size, verbose=False):
-        bytes_ = text.encode("utf-8")
-        tokens = list(bytes_)
+        """Here, we perform merging in order to reduce the length of the tokens. (BPE)"""
+        textBytes = text.encode("utf-8")
+        tokens = list(textBytes)
         initial_len = len(tokens)
         n_merges = vocab_size - 256
-        merges = {}
+
+        # Vocab(Reserved):
+        for i in range(256):
+            self.vocab[i] = bytes([i])
+
         for i in range(n_merges):
-            stats = getStats(tokens)  # {pair: count, ...}
+            stats = getStats(tokens)
             top_pair = max(stats, key=stats.get)  # pyright: ignore[reportCallIssue, reportArgumentType]
-            if stats[top_pair] == 1:
+            if stats[top_pair] < 2:
                 break
             replace_id = 256 + i
             tokens = merge(tokens, top_pair, replace_id)
-            merges[top_pair] = replace_id
+            self.merges[top_pair] = replace_id
+            self.vocab[replace_id] = self.vocab[top_pair[0]] + self.vocab[top_pair[1]]
+
             if verbose:
-                print(f"Merge {i}/{n_merges}: {top_pair} -> {replace_id}")
+                print(f"Merge ({i + 1}/{n_merges}): {replace_id} -> {top_pair}")
 
         final_len = len(tokens)
-        # if verbose:
         print(f"Compression: {initial_len / final_len:.2f}x")
 
-        self.merges = merges
-
-        # Developing the Vocab:
-        self.vocab = {idx: bytes([idx]) for idx in range(256)}
-        for (p0, p1), id in self.merges.items():
-            self.vocab[id] = self.vocab[p0] + self.vocab[p1]
-
-    def encode(self, text):
+    def encode(self, text: str):
         text_bytes = text.encode("utf-8")
-        ids = list(text_bytes)
+        tokens = list(text_bytes)
+        # Compression:
         while True:
-            stats = getStats(ids)
-            lookfor_pair = min(stats, key=lambda p: self.merges.get(p, float('inf')))
-            if lookfor_pair not in self.merges:
+            if len(tokens) < 2:
                 break
-            replace_id = self.merges[lookfor_pair]
-            ids = merge(ids, lookfor_pair, replace_id)
-        
-        return ids
+            stats = getStats(tokens)
+            pair = min(stats, key=lambda p: self.merges.get(p, float("inf")))
+            if pair not in self.merges:
+                break
+            tokens = merge(tokens, pair, self.merges[pair])
+        return tokens
 
-    def decode(self, ids):
-        # raw_bytes = b"".join([self.vocab[ids] for id in ids])
-        raw_bytes = b""
+    def decode(self, ids): 
+        byteTxt = b""
         for id in ids:
-            raw_bytes += self.vocab[id]
-        txt = raw_bytes.decode('utf-8', errors='replace')
-        return txt
-            # if id < 256:
-            #     append_ = self.vocab[id]
+            tok = self.vocab.get(id)
+            if tok is None:
+                raise ValueError(f'Token: {id} not part of vocabulary!!')
             
-            # raw_bytes += append_  # pyright: ignore[reportPossiblyUnboundVariable]
+            byteTxt += self.vocab[id]
+        txt = byteTxt.decode('utf-8', errors='replace')
+        return txt

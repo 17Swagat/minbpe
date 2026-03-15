@@ -1,21 +1,20 @@
-def getStats(ids: list) -> dict:
+def getStats(tokens):
     counts = {}
-    for pair in zip(ids, ids[1:]):
+    for pair in zip(tokens, tokens[1:]):
         counts[pair] = counts.get(pair, 0) + 1
     return counts
 
-def merge(ids, pair, idx):
+def merge(ids, pair, replace_id):
     i = 0
-    new_ids = []
-    while i < len(ids): # - 1:
-        if (i+1) >= len(ids):
-            new_ids += [ids[i]]
-            i += 1
-            continue
+    newids = []
+    while i < len(ids):
+        if i == len(ids) - 1:
+            newids.append(ids[i])
+            break
         if (ids[i], ids[i+1]) == pair:
-            new_ids += [idx]
+            newids.append(replace_id)
             i += 2
         else:
-            new_ids += [ids[i]]
+            newids.append(ids[i])
             i += 1
-    return new_ids
+    return newids
