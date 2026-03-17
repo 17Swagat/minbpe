@@ -51,6 +51,8 @@ class RegexTokenizer(Tokenizer):
     def decode(self, ids): 
         txt_bytes = b""
         for id in ids:
+            if id not in self.vocab:
+                raise ValueError(f'ID: {id} NOT in Vocab')
             txt_bytes += self.vocab[id]
         txt = txt_bytes.decode('utf-8', errors='replace')
         return txt

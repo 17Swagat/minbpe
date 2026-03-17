@@ -17,6 +17,14 @@ print(txt_encoding)
 # txt_encoding = [97]
 txt_decoding = tokenizer.decode(txt_encoding)
 print(txt_decoding)
+# %%
+txt_encoding = [400]
+txt_decoding = tokenizer.decode(txt_encoding)
+print(txt_decoding)
+# %%
+txt_encoding = [401]
+txt_decoding = tokenizer.decode(txt_encoding)
+print(txt_decoding)
 
 # %%
 # tokenizer.merges
