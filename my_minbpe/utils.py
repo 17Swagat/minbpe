@@ -1,5 +1,5 @@
-def getStats(tokens):
-    counts = {}
+def getStats(tokens, stats=None):
+    counts = {} if stats is None else stats
     for pair in zip(tokens, tokens[1:]):
         counts[pair] = counts.get(pair, 0) + 1
     return counts

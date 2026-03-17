@@ -1,32 +1,97 @@
 """This file will contains code for testing my `Version of MinBPE`"""
 
 ########################################################################
-# %% Revision #2
-from my_minbpe import BasicTokenizer
+# %%
+from my_minbpe import RegexTokenizer
 
-tokenizer = BasicTokenizer()
+tokenizer = RegexTokenizer()
 with open('tests/taylorswift.txt', 'r') as file:
     text = file.read()
-
-tokenizer.train(text, 400, False)
 # %%
-# Encoding & Decoding
-tempText = "You love Taylor Swift"
-encoding = tokenizer.encode(tempText)
-print(list(tempText.encode('utf-8')))
-print(encoding)
-
+tokenizer.train(text, vocab_size=400)
 # %%
-decoding = tokenizer.decode(encoding)
-print(decoding)
-print(decoding == tempText)
-# %%
-tokenizer.decode([128])
-
+txt = " The her" #op her
+txt_encoding = tokenizer.encode(txt)
+print(txt_encoding)
 
 # %%
 # tokenizer.merges
+
+# %%
 tokenizer.vocab
+
+# %%
+
+########################################################################
+# %% Implementing `RegexTokenizer`
+import regex as re
+from my_minbpe import getStats, merge
+
+GPT4_SPLIT_PATTERN = r"""'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+"""
+gpt4Pattern = re.compile(GPT4_SPLIT_PATTERN)
+text_chunks = re.findall(gpt4Pattern, "hello world!")
+
+with open('tests/taylorswift.txt', 'r') as file:
+    text = file.read()
+
+# %%
+text_chunks = re.findall(gpt4Pattern, text)
+
+# %%
+ids = [list(chunk.encode('utf-8')) for chunk in text_chunks]
+print(ids[:5])
+# %%
+n_vocab = 260
+n_merges = n_vocab - 256
+for i in range(n_merges):
+    stats = {}
+    for chunk_id in ids:
+        getStats(chunk_id, stats)
+    top_pair = max(stats, key=stats.get)
+    replace_id = 256 + i
+    ids = [merge(chuck_id, top_pair, replace_id) for chuck_id in ids]
+    
+
+# %%
+########################################################################
+# %% Revision #2
+# from my_minbpe import BasicTokenizer
+
+# tokenizer = BasicTokenizer()
+# with open('tests/taylorswift.txt', 'r') as file:
+#     text = file.read()
+
+# tokenizer.train(text, 400, False)
+# # %%
+# # Encoding & Decoding
+# tempText = "You love Taylor Swift"
+# encoding = tokenizer.encode(tempText)
+# print(list(tempText.encode('utf-8')))
+# print(encoding)
+# # %%
+# from minbpe import BasicTokenizer
+
+# karpathyTokenizer = BasicTokenizer()
+# karpathyTokenizer.train(text, 400, False)
+
+# # %%
+# tempText = "You love Taylor Swift"
+# encoding = karpathyTokenizer.encode(tempText)
+# print(list(tempText.encode('utf-8')))
+# print(encoding)
+
+
+# # %%
+# decoding = tokenizer.decode(encoding)
+# print(decoding)
+# print(decoding == tempText)
+# # %%
+# tokenizer.decode([128])
+
+
+# # %%
+# # tokenizer.merges
+# tokenizer.vocab
 
 
 # %% Revision #2
@@ -80,7 +145,7 @@ tokenizer.vocab
 # print(my_encoding)
 # my_decoding = mytokenizer.decode(my_encoding)
 # print(my_decoding == inputText)
-# # %% 
+# # %%
 # idx_check = 468 #388 #279 #32
 # print(
 #     mytokenizer.vocab[idx_check]
@@ -99,9 +164,6 @@ tokenizer.vocab
 # mytokenizer.vocab
 
 
-
-
 # # %%
 # # @Karpathy:
 # # Let's Test out `minbpe`:=>
-
