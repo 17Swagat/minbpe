@@ -48,7 +48,12 @@ class RegexTokenizer(Tokenizer):
         
         return tokens
                 
-    def decode(self, ids): ...
+    def decode(self, ids): 
+        txt_bytes = b""
+        for id in ids:
+            txt_bytes += self.vocab[id]
+        txt = txt_bytes.decode('utf-8', errors='replace')
+        return txt
     
     # def encode(self, text: str): 
     #     tokens = list(text.encode('utf-8'))

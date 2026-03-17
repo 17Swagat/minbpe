@@ -13,6 +13,10 @@ tokenizer.train(text, vocab_size=400)
 txt = " The her" #op her
 txt_encoding = tokenizer.encode(txt)
 print(txt_encoding)
+# %%
+# txt_encoding = [97]
+txt_decoding = tokenizer.decode(txt_encoding)
+print(txt_decoding)
 
 # %%
 # tokenizer.merges
