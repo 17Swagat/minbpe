@@ -3,6 +3,8 @@ from tqdm import tqdm
 
 from .base import Tokenizer
 from .utils import getStats, merge
+# import json
+import ast
 
 
 class RegexTokenizer(Tokenizer):
@@ -56,6 +58,7 @@ class RegexTokenizer(Tokenizer):
             txt_bytes += self.vocab[id]
         txt = txt_bytes.decode('utf-8', errors='replace')
         return txt
+    
     
     # def encode(self, text: str): 
     #     tokens = list(text.encode('utf-8'))

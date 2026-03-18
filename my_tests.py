@@ -1,5 +1,74 @@
 """This file will contains code for testing my `Version of MinBPE`"""
 
+# %%
+import os
+model_file_path = 'my_models'
+model_file_path = os.path.join(model_file_path, 'models_2_400vocab.model')
+with open(model_file_path, 'r') as file:
+    bpe_version = file.readline().strip()
+    merges = file.readline().strip()[1:]
+    vocab = file.readline().strip()[1:]
+print(vocab)
+# print(bpe_version)
+# print(merges)
+
+# %%
+from my_minbpe import RegexTokenizer
+import os
+
+tokenizer = RegexTokenizer()
+model_file_path = 'my_models'
+model_file_path = os.path.join(model_file_path, 'models_2_400vocab.model')
+merges, vocab = tokenizer.load(model_file_path)
+
+# %%
+# print(merges)
+# print(vocab)
+print(type(vocab))
+
+
+# %%
+########################################################################
+# %%
+import os
+# import json
+import ast
+
+model_file_path = 'my_models'
+model_file_path = os.path.join(model_file_path, 'models.model')
+with open(model_file_path, 'r') as file:
+    bpe_version = file.readline().strip()
+    # print(bpe_version)
+    merges = file.readline().strip()[1:]
+    # merges = "\"" + merges + "\""
+# merges = json.loads(merges)
+merges = ast.literal_eval(merges)
+print(type(merges))
+print(merges[(101, 114)])
+
+
+# %%
+########################################################################
+# %%
+from my_minbpe import RegexTokenizer
+
+tokenizer = RegexTokenizer()
+with open('tests/taylorswift.txt', 'r') as file:
+    text = file.read()
+
+# tokenizer.train(text, 276, False)
+tokenizer.train(text, 400, False)
+
+# %%
+# Saving merges
+import os
+MODEL_SAVE_PATH = 'my_models'
+os.makedirs(MODEL_SAVE_PATH,exist_ok=True)
+model_file_name = 'models_2_400vocab'
+MODEL_SAVE_PATH = os.path.join(MODEL_SAVE_PATH, model_file_name)
+tokenizer.save(MODEL_SAVE_PATH)
+
+# %%
 ########################################################################
 # %%
 from my_minbpe import RegexTokenizer
@@ -9,6 +78,14 @@ with open('tests/taylorswift.txt', 'r') as file:
     text = file.read()
 # %%
 tokenizer.train(text, vocab_size=400)
+# %%
+txt = "\n"
+txt_encoding = tokenizer.encode(txt)
+print(txt_encoding)
+# %%
+txt_decoding = tokenizer.decode(txt_encoding)
+print(txt_decoding)
+
 # %%
 txt = " The her" #op her
 txt_encoding = tokenizer.encode(txt)
@@ -22,7 +99,9 @@ txt_encoding = [400]
 txt_decoding = tokenizer.decode(txt_encoding)
 print(txt_decoding)
 # %%
-txt_encoding = [401]
+txt = "!"
+txt_encoding = tokenizer.encode(txt)
+print(txt_encoding)
 txt_decoding = tokenizer.decode(txt_encoding)
 print(txt_decoding)
 

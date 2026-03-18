@@ -47,13 +47,13 @@ class BasicTokenizer(Tokenizer):
             tokens = merge(tokens, pair, self.merges[pair])
         return tokens
 
-    def decode(self, ids): 
+    def decode(self, ids):
         byteTxt = b""
         for id in ids:
             tok = self.vocab.get(id)
             if tok is None:
-                raise ValueError(f'Token: {id} not part of vocabulary!!')
-            
+                raise ValueError(f"Token: {id} not part of vocabulary!!")
+
             byteTxt += self.vocab[id]
-        txt = byteTxt.decode('utf-8', errors='replace')
+        txt = byteTxt.decode("utf-8", errors="replace")
         return txt
