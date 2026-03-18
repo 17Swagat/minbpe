@@ -1,6 +1,32 @@
 """This file will contains code for testing my `Version of MinBPE`"""
 
 # %%
+from my_minbpe import RegexTokenizer
+import os
+
+tokenizer = RegexTokenizer()
+model_file_path = 'my_models'
+model_file_path = os.path.join(model_file_path, 'models_2_400vocab.model')
+tokenizer.load(model_file_path)
+
+# %%
+# txt = "hello world!!!? (안녕하세요!) lol123 😉"
+txt = "안"
+txt_encoding = tokenizer.encode(txt)
+print(txt_encoding)
+txt_decoding = tokenizer.decode(txt_encoding)
+print(txt_decoding)
+
+# %%
+tokenizer.vocab
+
+# %%
+
+######################################################################################
+######################################################################################
+
+
+# %%
 import os
 model_file_path = 'my_models'
 model_file_path = os.path.join(model_file_path, 'models_2_400vocab.model')

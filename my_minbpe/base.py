@@ -31,4 +31,7 @@ class Tokenizer:
             vocab = file.readline().strip()[1:]
         merges = ast.literal_eval(merges)
         vocab = ast.literal_eval(vocab)
-        return merges, vocab
+        self.merges = merges
+        self.vocab = vocab
+        print('Saved Tokenizer: [Merges] & [vocab] -> Loaded')
+        # return merges, vocab

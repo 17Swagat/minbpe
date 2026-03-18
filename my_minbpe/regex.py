@@ -3,9 +3,6 @@ from tqdm import tqdm
 
 from .base import Tokenizer
 from .utils import getStats, merge
-# import json
-import ast
-
 
 class RegexTokenizer(Tokenizer):
     def __init__(self):
